@@ -1,0 +1,15 @@
+# 开发产物：交付说明、取证截图、调试探针，不入库、不部署
+_task/
+
+# 系统与编辑器
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# 依赖与日志
+node_modules/
+*.log
+
+# 部署生成物
+.vercel/

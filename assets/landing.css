@@ -1,0 +1,441 @@
+/* ============================================================
+   Wall3D 落地页 · 深色画廊方向
+   规则层依据（ui-forge 规则库实测命中）：
+   - 焦点环：每个可操作控件可见焦点（ux / Accessibility · High）
+   - 触控目标：Web ≥ 24×24 CSS px（WCAG 2.2 AA Target Size）
+   - 对比度：正文 ≥ 4.5:1，深底不用低对比灰字（ux / Accessibility）
+   - 媒体首屏：overlay 保证文字对比；离屏暂停；reduced-motion 静态兜底
+     （landing / video-first-hero）
+   ============================================================ */
+
+:root {
+  --bg: #0b0b0e;
+  --bg-2: #101014;
+  --panel: rgba(18, 18, 24, 0.6);
+  --line: rgba(255, 255, 255, 0.09);
+  --ink: #f2f2f5;      /* 标题，约 16:1 */
+  --ink-2: #b9b9c3;    /* 正文，约 9:1 */
+  --ink-3: #93939e;    /* 次要，约 6.3:1，达 4.5:1 */
+  --accent: #c2357f;
+  --accent-2: #2ec4d6;
+  --ring: #35b8d6;
+  --font: "Inter", "Segoe UI", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+}
+
+/* 每个区块从场景自身的 theme 色取强调色 */
+.hero { --accent: #c2357f; --accent-2: #2ec4d6; --ring: #2ec4d6; }
+#scene-neon-city      { --accent: #c2357f; --accent-2: #2ec4d6; --ring: #2ec4d6; }
+#scene-sea-and-sky    { --accent: #2f7fb5; --accent-2: #f2a25c; --ring: #f2a25c; }
+#scene-orbital-station{ --accent: #2f6fd0; --accent-2: #35b8d6; --ring: #35b8d6; }
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink-2);
+  font-family: var(--font);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- 焦点环：不删除 outline，只美化 ---------- */
+a:focus-visible,
+button:focus-visible,
+.frame:focus-visible {
+  outline: 2px solid var(--ring, #7dd3fc);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+.frame:focus-visible { outline-offset: 5px; }
+
+/* ---------- 跳转链接 ---------- */
+.skip-link {
+  position: absolute;
+  left: 16px; top: -48px;
+  z-index: 60;
+  padding: 10px 16px;
+  background: var(--bg-2);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  transition: top 0.2s;
+}
+.skip-link:focus { top: 12px; }
+
+/* ---------- 导航 ---------- */
+.nav {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px clamp(20px, 5vw, 56px);
+  transition: background 0.35s, border-color 0.35s;
+  border-bottom: 1px solid transparent;
+}
+.nav.scrolled {
+  background: rgba(11, 11, 14, 0.72);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom-color: var(--line);
+}
+.brand {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+  text-decoration: none;
+}
+.brand span { color: var(--accent-2); }
+.nav-links { display: flex; gap: clamp(14px, 3vw, 34px); }
+.nav-links a {
+  color: var(--ink-2);
+  text-decoration: none;
+  font-size: 14.5px;
+  padding: 8px 2px;   /* 触控目标：链接盒高约 38px */
+}
+.nav-links a:hover { color: var(--ink); }
+.nav-links a.active { color: var(--ink); position: relative; }
+.nav-links a.active::after {
+  content: "";
+  position: absolute;
+  left: 2px; right: 2px; bottom: 2px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--accent-2);
+}
+
+/* ---------- 首屏：满版场景 + 景深 ---------- */
+.hero-wrap { height: 165vh; }
+.hero {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.hero-media { position: absolute; inset: 0; will-change: transform; }
+/* 每个首屏场景一个舞台：iframe 在底层渲染，海报在中层遮住加载期，
+   ready 后淡出露出实时画面 */
+.hero-stage { position: absolute; inset: 0; }
+.hero-stage .hero-poster,
+.hero-stage iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border: 0;
+  display: block;
+}
+.hero-poster { transition: opacity 1.1s ease; }
+.hero-stage.live .hero-poster { opacity: 0; }
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg,
+      rgba(11, 11, 14, 0.7) 0%,
+      rgba(11, 11, 14, 0.26) 34%,
+      rgba(11, 11, 14, 0.2) 55%,
+      rgba(11, 11, 14, 0.94) 92%,
+      #0b0b0e 100%);
+  will-change: opacity;
+}
+
+.hero-copy {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 0 20px;
+  max-width: 860px;
+  will-change: transform, opacity;
+  text-shadow: 0 1px 3px rgba(6, 6, 10, 0.6), 0 4px 26px rgba(6, 6, 10, 0.55);
+}
+.hero-eyebrow {
+  margin: 0 0 18px;
+  font-size: 13px;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--ink-2); /* 压亮背景（夕阳/天空）时保持对比 */
+}
+.hero-title {
+  margin: 0;
+  font-size: clamp(44px, 8.5vw, 96px);
+  line-height: 1.06;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: var(--ink);
+}
+.hero-title .line { display: block; overflow: hidden; }
+.hero-title .line > span { display: inline-block; will-change: transform; }
+.hero-sub {
+  margin: 22px auto 0;
+  max-width: 560px;
+  font-size: clamp(15px, 2vw, 17.5px);
+  color: var(--ink-2);
+}
+.hero-actions { margin-top: 34px; display: flex; justify-content: center; }
+
+.hero-hint {
+  position: absolute;
+  bottom: 26px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  margin: 0;
+  font-size: 12.5px;
+  letter-spacing: 0.18em;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+
+/* ---------- 镜头 chips（触控目标 ≥ 24px，实际 36px） ---------- */
+.chips { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.chip {
+  min-height: 36px;
+  min-width: 24px;
+  padding: 6px 15px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(14, 14, 18, 0.55);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: var(--ink);
+  font: 500 13px/1.5 var(--font);
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: background 0.25s, border-color 0.25s, color 0.25s, transform 0.15s;
+}
+@media (hover: hover) {
+  .chip:hover { border-color: rgba(255, 255, 255, 0.38); }
+}
+.chip:active { transform: scale(0.96); }
+.chip[aria-pressed="true"] {
+  background: var(--accent-2);
+  border-color: transparent;
+  color: #07131a;
+  font-weight: 600;
+}
+.chip:disabled,
+.chip[aria-disabled="true"] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ---------- 场景区块 ---------- */
+.scenes {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 40px clamp(20px, 5vw, 56px) 80px;
+  display: grid;
+  gap: clamp(96px, 14vh, 160px);
+}
+.scene {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: clamp(32px, 5vw, 72px);
+  align-items: center;
+}
+.scene-alt .scene-stage { order: 2; }
+.scene-alt .scene-meta  { order: 1; }
+
+/* 画框：媒体出场的主角 */
+.frame {
+  position: relative;
+  margin: 0;
+  aspect-ratio: 16 / 9;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #000;
+  border: 1px solid var(--line);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.55);
+}
+.frame-poster,
+.frame iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border: 0;
+  display: block;
+}
+.frame-poster { transition: opacity 1s ease; }
+.frame.live .frame-poster { opacity: 0; }
+
+/* reduced-motion / 手动载入按钮（[hidden] 必须压过 display，否则常显） */
+.frame-load[hidden] { display: none; }
+.frame-load {
+  position: absolute;
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 10px 22px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(10, 10, 14, 0.66);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: var(--ink);
+  font: 500 14px/1 var(--font);
+  cursor: pointer;
+}
+.frame-load:hover { border-color: rgba(255, 255, 255, 0.5); }
+
+/* 场景无需指针交互，禁掉 iframe 的指针事件：
+   否则 iframe 会吞掉滚轮/触摸，页面在画面上无法滚动 */
+.hero-stage iframe,
+.frame iframe {
+  pointer-events: none;
+}
+
+/* 首屏的手动载入按钮：常规文档流位置，不居中悬浮 */
+.hero-actions { flex-direction: column; align-items: center; }
+.hero-load {
+  position: static;
+  transform: none;
+  margin-top: 14px;
+}
+
+/* 底部操作条：常显——触屏无 hover、键盘可预期、加载中也能看到镜头区 */
+.frame-bar {
+  position: absolute;
+  inset: auto 0 0 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 26px 12px 12px;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.62) 78%);
+}
+.frame-bar .chips { justify-content: flex-start; }
+.frame-bar .chip {
+  min-height: 32px;
+  padding: 4px 12px;
+  font-size: 12.5px;
+}
+.frame-fs {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(14, 14, 18, 0.55);
+  color: var(--ink);
+  cursor: pointer;
+  transition: border-color 0.25s, background 0.25s;
+}
+.frame-fs:hover { border-color: rgba(255, 255, 255, 0.45); }
+
+/* 静态兜底角标 */
+.frame-static {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 3;
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: rgba(10, 10, 14, 0.72);
+  border: 1px solid var(--line);
+  color: var(--ink-2);
+  font-size: 12px;
+  letter-spacing: 0.05em;
+}
+
+/* 全屏态：画框铺满，保留操作条 */
+.frame:fullscreen {
+  aspect-ratio: auto;
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+  border: 0;
+}
+.frame:fullscreen .frame-bar,
+.frame:-webkit-full-screen .frame-bar { opacity: 1; }
+
+/* 场景文案 */
+.scene-no {
+  margin: 0 0 6px;
+  font-size: 13px;
+  letter-spacing: 0.3em;
+  color: var(--accent-2);
+  font-weight: 600;
+}
+.scene-name {
+  margin: 0;
+  font-size: clamp(28px, 4vw, 44px);
+  line-height: 1.15;
+  color: var(--ink);
+  font-weight: 700;
+}
+.scene-en {
+  display: block;
+  margin-top: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.scene-desc {
+  margin: 18px 0 0;
+  font-size: 16px;
+  max-width: 40em;
+}
+.scene-tags {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 22px 0 0;
+  padding: 0;
+}
+.scene-tags li {
+  padding: 5px 13px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-size: 12.5px;
+  color: var(--ink-3);
+  letter-spacing: 0.06em;
+}
+
+/* ---------- 页脚 ---------- */
+.footer {
+  border-top: 1px solid var(--line);
+  padding: 34px 20px 44px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--ink-3);
+}
+.footer a { color: var(--ink-2); }
+
+/* ---------- 窄屏 ---------- */
+@media (max-width: 860px) {
+  .hero-wrap { height: 128vh; }
+  .scene { grid-template-columns: 1fr; gap: 26px; }
+  .scene-alt .scene-stage { order: 1; }
+  .scene-alt .scene-meta  { order: 2; }
+  .nav-links { display: none; }
+  .frame-bar { opacity: 1; }        /* 触屏无 hover，常显 */
+  .hero-actions { margin-top: 26px; }
+}
+
+/* ---------- 减少动态效果：内容直接到位 ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

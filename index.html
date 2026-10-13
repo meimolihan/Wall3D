@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Wall3D —— 三幕实时 3D 动态壁纸：霓虹都市、海天日月、星港轨道，在浏览器里直接预览。" />
+  <title>Wall3D · 三幕实时壁纸</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b0b0e'/%3E%3Cpath d='M6 22 13 9l3 6 3-6 7 13' fill='none' stroke='%232ec4d6' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="assets/landing.css" />
+</head>
+<body>
+
+  <a class="skip-link" href="#scenes">跳到场景列表</a>
+
+  <nav class="nav" id="nav">
+    <a class="brand" href="#top">Wall<span>3D</span></a>
+    <div class="nav-links">
+      <a href="#scene-neon-city">霓虹都市</a>
+      <a href="#scene-sea-and-sky">海天日月</a>
+      <a href="#scene-orbital-station">星港轨道</a>
+    </div>
+  </nav>
+
+  <!-- ============ 首屏：满版实时场景 + 景深滚动 ============ -->
+  <div class="hero-wrap" id="top">
+    <header class="hero">
+      <div class="hero-media" id="hero-media">
+        <!-- 默认场景舞台：海报是禁 JS / WebGL 失败时的兜底；
+             另两个场景的舞台由脚本按需创建 -->
+        <div class="hero-stage" data-hero="neon-city">
+          <img class="hero-poster" src="objects/3c2d1025b70e2f5a00c179b2c056a6f9/poster.webp"
+               alt="霓虹都市：黄昏天际线下的赛博城市" />
+        </div>
+        <div class="hero-overlay" aria-hidden="true"></div>
+      </div>
+
+      <div class="hero-copy">
+        <p class="hero-eyebrow">KPanel 场景包 · 实时渲染</p>
+        <h1 class="hero-title"><span class="line"><span>三幕实时壁纸</span></span></h1>
+        <p class="hero-sub">城市、海天与星港 —— 三个会呼吸的 3D 场景，此刻就在你的浏览器里运行。</p>
+        <div class="hero-actions">
+          <div class="chips" id="hero-chips" role="group" aria-label="切换首屏镜头"></div>
+          <button class="frame-load hero-load" id="hero-load" type="button" hidden>
+            <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>
+            <span>载入实时预览</span>
+          </button>
+        </div>
+      </div>
+
+      <p class="hero-hint" aria-hidden="true">滚动，走进下一个场景 ↓</p>
+    </header>
+  </div>
+
+  <!-- ============ 三个场景 ============ -->
+  <main class="scenes" id="scenes">
+
+    <section class="scene reveal-media-left" id="scene-neon-city" data-scene="neon-city">
+      <div class="scene-stage">
+        <figure class="frame" data-hash="3c2d1025b70e2f5a00c179b2c056a6f9" data-shot="0" tabindex="0"
+                aria-label="霓虹都市 实时预览，回车进入全屏">
+          <img class="frame-poster" src="objects/3c2d1025b70e2f5a00c179b2c056a6f9/poster.webp"
+               alt="霓虹都市静态海报：黄昏天际线" />
+          <button class="frame-load" type="button" hidden>
+            <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>
+            <span>载入实时预览</span>
+          </button>
+          <figcaption class="frame-bar">
+            <div class="chips" role="group" aria-label="霓虹都市镜头切换"></div>
+            <button class="frame-fs" type="button" aria-label="全屏预览霓虹都市" title="全屏预览">
+              <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </button>
+          </figcaption>
+          <span class="frame-static" hidden>当前设备不支持实时渲染 · 静态海报</span>
+        </figure>
+      </div>
+      <div class="scene-meta reveal-copy">
+        <p class="scene-no">01</p>
+        <h2 class="scene-name">霓虹都市<span class="scene-en">Neon City</span></h2>
+        <p class="scene-desc">从黄昏到雨夜，高架车流与霓虹招牌点亮整座不夜城。</p>
+        <ul class="scene-tags">
+          <li>城市</li><li>夜色</li><li>霓虹</li><li>赛博</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="scene scene-alt reveal-media-rise" id="scene-sea-and-sky" data-scene="sea-and-sky">
+      <div class="scene-stage">
+        <figure class="frame" data-hash="73fc4349b9a676013338e6de85ee6836" data-shot="0" tabindex="0"
+                aria-label="海天日月 实时预览，回车进入全屏">
+          <img class="frame-poster" src="objects/73fc4349b9a676013338e6de85ee6836/poster.webp"
+               alt="海天日月静态海报：礁石与昼夜分界" />
+          <button class="frame-load" type="button" hidden>
+            <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>
+            <span>载入实时预览</span>
+          </button>
+          <figcaption class="frame-bar">
+            <div class="chips" role="group" aria-label="海天日月镜头切换"></div>
+            <button class="frame-fs" type="button" aria-label="全屏预览海天日月" title="全屏预览">
+              <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </button>
+          </figcaption>
+          <span class="frame-static" hidden>当前设备不支持实时渲染 · 静态海报</span>
+        </figure>
+      </div>
+      <div class="scene-meta reveal-copy">
+        <p class="scene-no">02</p>
+        <h2 class="scene-name">海天日月<span class="scene-en">Sea and Sky</span></h2>
+        <p class="scene-desc">礁石、海天与远岸城市：日月星辰十分钟轮转一个昼夜。</p>
+        <ul class="scene-tags">
+          <li>海</li><li>天空</li><li>星辰</li><li>昼夜</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="scene reveal-media-left" id="scene-orbital-station" data-scene="orbital-station">
+      <div class="scene-stage">
+        <figure class="frame" data-hash="ff18942f6589b01a984af80e7880125e" data-shot="0" tabindex="0"
+                aria-label="星港轨道 实时预览，回车进入全屏">
+          <img class="frame-poster" src="objects/ff18942f6589b01a984af80e7880125e/poster.webp"
+               alt="星港轨道静态海报：行星与环形空间站" />
+          <button class="frame-load" type="button" hidden>
+            <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>
+            <span>载入实时预览</span>
+          </button>
+          <figcaption class="frame-bar">
+            <div class="chips" role="group" aria-label="星港轨道镜头切换"></div>
+            <button class="frame-fs" type="button" aria-label="全屏预览星港轨道" title="全屏预览">
+              <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </button>
+          </figcaption>
+          <span class="frame-static" hidden>当前设备不支持实时渲染 · 静态海报</span>
+        </figure>
+      </div>
+      <div class="scene-meta reveal-copy">
+        <p class="scene-no">03</p>
+        <h2 class="scene-name">星港轨道<span class="scene-en">Orbital Station</span></h2>
+        <p class="scene-desc">从星云深处缓缓靠近行星，环形空间站在轨道上徐徐旋转。</p>
+        <ul class="scene-tags">
+          <li>太空</li><li>行星</li><li>科幻</li>
+        </ul>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <p><a href="https://github.com/meimolihan/Wall3D" rel="noopener">Wall3D</a> · 场景来自 <a href="https://github.com/kejilion/KPanel" rel="noopener">KPanel</a>（MIT License）· 基于 <a href="https://threejs.org" rel="noopener">three.js</a> 实时渲染</p>
+  </footer>
+
+  <script src="vendor/gsap.min.js"></script>
+  <script src="vendor/ScrollTrigger.min.js"></script>
+  <script src="vendor/lenis.min.js"></script>
+  <script src="assets/landing.js"></script>
+</body>
+</html>
