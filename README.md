@@ -38,6 +38,9 @@ Wall3D/
 │   ├── 73fc4349…/        海天日月 Sea and Sky
 │   └── ff18942f…/        星港轨道 Orbital Station
 ├── vercel.json           Vercel 部署配置
+├── scene-template/       新场景骨架（three.js + 完整宿主协议，复制后开发新场景）
+├── docs/
+│   └── kpanel-scene-pack-spec-zh.md  KPanel 场景包开发规范（中文精简版）
 ├── .gitignore
 └── _task/                开发产物（交付说明 / 取证截图，不入库、不部署）
 ```
@@ -102,7 +105,7 @@ objects/<scene-id>/
 
 ## 场景制作规范
 
-新增场景时遵循以下规范，确保与现有场景风格统一、可作为桌面壁纸长时间运行。
+新增场景时遵循以下规范，确保与现有场景风格统一、可作为桌面壁纸长时间运行。KPanel 官方规范的中文精简版见 [docs/kpanel-scene-pack-spec-zh.md](docs/kpanel-scene-pack-spec-zh.md)，可直接复制 [scene-template/](scene-template/) 起步开发新场景。
 
 ### 构图
 

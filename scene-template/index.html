@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nebula Drift</title>
+  <style>
+    html, body { margin: 0; height: 100%; overflow: hidden; background: #05030a; }
+    canvas { display: block; }
+  </style>
+  <!-- 开发阶段用 importmap + CDN；发布到 KPanel 时按 BUILD.md 打包成无 importmap 的 dist/scene.js -->
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.186.0/build/three.module.js"
+      }
+    }
+  </script>
+</head>
+<body>
+  <script type="module" src="./scene.js"></script>
+</body>
+</html>

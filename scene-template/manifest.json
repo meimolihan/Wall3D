@@ -1,0 +1,36 @@
+{
+  "schema": 1,
+  "id": "nebula-drift",
+  "version": "0.1.0",
+  "runtime": "kpanel-scene-pack@1",
+  "name": {
+    "zh-CN": "星云漫游",
+    "en-US": "Nebula Drift"
+  },
+  "description": {
+    "zh-CN": "紫色星云缓缓流转，中央星核呼吸明灭，三个机位漫游其间",
+    "en-US": "A purple nebula drifts while its core breathes; three shots drift through it"
+  },
+  "author": {
+    "name": "meimolihan",
+    "url": "https://github.com/meimolihan"
+  },
+  "license": "MIT",
+  "tags": ["nebula", "space", "particles", "abstract"],
+  "entry": "index.html",
+  "poster": "poster.webp",
+  "thumb": "thumb.webp",
+  "theme": {
+    "brand": "#7b5cd6",
+    "neutral": "#2a2438",
+    "signature": "#6ec6ff"
+  },
+  "cameras": [
+    { "id": "panorama", "name": { "zh-CN": "星云全景", "en-US": "Panorama" } },
+    { "id": "core", "name": { "zh-CN": "星云核心", "en-US": "Core" } },
+    { "id": "closeup", "name": { "zh-CN": "星核特写", "en-US": "Close-up" } }
+  ],
+  "dependencies": [
+    { "name": "three", "version": "0.186.0", "license": "MIT" }
+  ]
+}
