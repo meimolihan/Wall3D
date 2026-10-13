@@ -151,8 +151,15 @@
     if (d.type === 'ready') {
       st.ready = true;
       if (st.posterHost) st.posterHost.classList.add('live');
-      if (st.isHero) { if (isActiveHero) setChipsEnabled(frame, true); }
-      else setChipsEnabled(frame, true);
+      if (st.isHero) {
+        if (isActiveHero) {
+          setChipsEnabled(frame, true);
+        } else {
+          /* 非 active 的预热场景 ready 后立即停帧（visibility:hidden 下 rAF 仍会跑） */
+          st.paused = true;
+          sendCmd(frame, 'pause');
+        }
+      } else setChipsEnabled(frame, true);
     } else if (d.type === 'camera') {
       st.shot = d.index;
       if (st.isHero) { if (isActiveHero) syncHeroChips(); }
@@ -188,15 +195,18 @@
   }
 
   /* 首屏各场景的播放状态统一收敛：
-     只跑「在视口内 + 是当前 active + 页面可见 + 已 ready」的那一个，
-     其余 display:none（rAF 天然停帧）+ pause，切回即恢复，画面无缝保留 */
+     只跑「在视口内 + 是当前 active + 页面可见 + 已 ready」的那一个。
+     用 visibility 而非 display 隐藏：display:none 会让 iframe 布局尺寸归零，
+     场景初始化时读到 window.innerWidth=0，bloom 渲染目标尺寸为 0 导致
+     GL_INVALID_FRAMEBUFFER_OPERATION；visibility:hidden 保留尺寸、只不可见，
+     再靠 pause 停帧省资源，切回 resume 即恢复画面。 */
   function syncHeroPlayback() {
     HERO_IDS.forEach(function (id) {
       var conf = HERO[id];
       var st = conf.stage && states.get(conf.stage);
       if (!st) return;
       var isActive = id === activeHeroId;
-      conf.stage.style.display = isActive ? 'block' : 'none';
+      conf.stage.style.visibility = isActive ? 'visible' : 'hidden';
       if (!st.started) return;
       var shouldRun = st.inView && isActive && !document.hidden;
       if (shouldRun && st.paused) {
