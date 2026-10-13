@@ -5,9 +5,6 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Deploy with Vercel](https://img.shields.io/badge/deploy-Vercel-000000.svg?logo=vercel&logoColor=white)](https://vercel.com/new)
 
-<!-- 预览图占位：将落地页首屏截图保存为 assets/preview.png 即可显示 -->
-![Wall3D 预览](assets/preview.png)
-
 **在线演示**：<https://wall3d.vercel.app>
 
 ## 简介
